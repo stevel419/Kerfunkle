@@ -1,3 +1,1 @@
-'''
-Kerfunkle - Dropshipping website project
-'''
+# Kerfunkle - Dropshipping Website Project
