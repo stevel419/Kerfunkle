@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kerfunkle</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="addToCart.js"></script>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <header>
+        <div class="container" id="nav_bar">
+            <h1><a href="home.html"><img src="imgs/logo.png" alt="Kerfunkle"></a></h1>
+            <nav>
+                <ul>
+                    <li><a href="shop.html">Shop</a></li>
+                    <li id="account" class="dropdown">
+                      <a href="#">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                        </svg>
+                      </a>
+                      <div id="accountDropdown" class="dropdown-content">
+                        <a id="logoutBtn">Log out</a>
+                      </div>
+                    </li>
+                    <li><a href="cart.html">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                        <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
+                      </svg>
+                    </a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <script src="dropdownMenu.js"></script>
+
+    <!-- Product Slider Section -->
+    <section class="carousel">
+        <div class="carousel-slides">
+          <div class="carousel-slide">
+            <img src="imgs/slider-imgs/product-slider1.png" alt="Slide 1">
+            <div class="carousel-slide-content">
+              <p class="h1"><strong>PARTY HARD?</strong></p>
+              <div class="button-group">
+                <a class="button" href="shop.html">SHOP KERFUNKLE</a>
+              </div>
+            </div>
+          </div>
+          <div class="carousel-slide">
+            <img src="imgs/slider-imgs/product-slider2.jpg" alt="Slide 2">
+            <div class="carousel-slide-content">
+              <p class="h2">ENHANCE</p>
+              <p class="h1"><strong>YOUR PARTY</strong></p>
+              <div class="button-group">
+                <a class="button" href="product-info.html?product=3">FOG MACHINES</a>
+              </div>
+            </div>
+          </div>
+          <div class="carousel-slide">
+            <img src="imgs/slider-imgs/product-slider3.jpg" alt="Slide 3">
+            <div class="carousel-slide-content">
+              <p class="h2">ELEVATE</p>
+              <p class="h1"><strong>THE VIBES</strong></p>
+              <div class="button-group">
+                <a class="button" href="product-info.html?product=2">DISCO BALLS</a>
+              </div>
+            </div>
+          </div>
+          <div class="carousel-slide">
+            <img src="imgs/slider-imgs/product-slider4.webp" alt="Slide 4">
+            <div class="carousel-slide-content">
+              <p class="h2">BRING YOUR SPACE</p>
+              <p class="h1"><strong>TO LIFE</strong></p>
+              <div class="button-group">
+                <a class="button" href="product-info.html?product=1">LED STRIP LIGHTS</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Carousel Navigation -->
+        <div class="carousel-navigation">
+          <button class="carousel-nav-btn"></button>
+          <button class="carousel-nav-btn active"></button>
+          <button class="carousel-nav-btn"></button>
+          <button class="carousel-nav-btn"></button>
+        </div>
+    </section>
+    <script>
+        // Carousel Functionality
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.carousel-slide');
+        const navigationButtons = document.querySelectorAll('.carousel-nav-btn');
+        const slideContents = document.querySelectorAll('.carousel-slide-content');
+        const totalSlides = slides.length;
+    
+        function updateCarousel() {
+          // Update the active slide
+          const slideWidth = slides[0].offsetWidth;
+          document.querySelector('.carousel-slides').style.transform = `translateX(-${currentSlide * slideWidth}px)`;
+          // Update navigation buttons
+          navigationButtons.forEach((button, index) => {
+            button.classList.toggle('active', index === currentSlide);
+          });
+          // Update slide content visibility
+          slideContents.forEach((content, index) => {
+            content.classList.toggle('active', index === currentSlide);
+          });
+        }
+        // Add event listener to navigation buttons
+        navigationButtons.forEach((button, index) => {
+          button.addEventListener('click', () => {
+            currentSlide = index;
+            updateCarousel();
+          });
+        });
+        // Auto-slide functionality
+        setInterval(() => {
+          currentSlide = (currentSlide + 1) % totalSlides;
+          updateCarousel();
+        }, 5000);
+    
+        updateCarousel();
+    </script>
+
+    <!-- Banner -->
+    <section class="banner">
+        <div class="banner-container">
+            <div class="banner-content">
+            </div>
+        </div>
+    </section>
+    <script>
+        window.addEventListener('resize', adjustBanner); // Run on window resize
+        document.addEventListener('DOMContentLoaded', adjustBanner); // Run when page loads
+        function adjustBanner() {
+            const bannerContainer = document.querySelector('.banner-container');
+            const bannerContent = document.querySelector('.banner-content');
+            const phrase = 'KERFUNKLE - WHERE THE FUN BEGINS!';
+            const containerWidth = bannerContainer.offsetWidth; // Get the width of the container
+            // Clear the current content in the banner
+            bannerContent.innerHTML = '';
+            // Calculate how many times the phrase can fit within the container width
+            const numberOfPhrases = Math.ceil(containerWidth / 250) * 3;
+            // Add the phrases dynamically
+            for (let i = 0; i < numberOfPhrases; i++) {
+                const phraseDiv = document.createElement('div');
+                phraseDiv.textContent = phrase;
+                bannerContent.appendChild(phraseDiv);
+            }
+        }
+    </script>
+
+    <!-- Product Listings -->
+    <section class="products">
+        <div class="container">
+            <h2>Best Selling Party Essentials</h2>
+            <div class="product-list">
+                <!-- Product Cards -->
+                <div class="product-card">
+                    <a href="product-info.html?product=1">
+                        <img class="product1" src="https://m.media-amazon.com/images/I/51i6YjrXxJL._MCnd_AC_.jpg" alt="LED Strip Lights">
+                        <h3 class="product1">100ft RGB LED Strip Lights - 2 Rolls of 50ft with Remote and App Control</h3>
+                    </a>
+                    <p class="product1">$9.99</p>
+                    <a href="cart.html" class="btn" onclick="addToCart('1', 'price_1QgHY6EPrNsWeR47bKK0sOy5', event)">Add to Cart</a>
+                </div>
+                <div class="product-card">
+                    <a href="product-info.html?product=2">
+                        <img class="product2" src="https://m.media-amazon.com/images/I/41A6iTSM3KL._MCnd_AC_.jpg" alt="Disco Ball">
+                        <h3 class="product2">Disco Ball - Sound Activated Party Lights with Remote Control</h3>
+                    </a>
+                    <p class="product2">$15.99</p>
+                    <a href="cart.html" class="btn" onclick="addToCart('2', 'price_1QiVw5EPrNsWeR47HrjbAAOs', event)">Add to Cart</a>
+                </div>
+                <div class="product-card">
+                    <a href="product-info.html?product=3">
+                        <img class="product3" src="https://m.media-amazon.com/images/I/51RI5DGFhuL._MCnd_AC_.jpg" alt="Fog Machine">
+                        <h3 class="product3">Fog Machine - 72 LED Lights, 500W and 2000 CFM Spray, Remote Control</h3>
+                    </a>
+                    <p class="product3">$34.99</p>
+                    <a href="cart.html" class="btn" onclick="addToCart('3', 'price_1QgfUoEPrNsWeR47GjKeIxj8', event)">Add to Cart</a>
+                </div>
+                <div class="product-card">
+                    <a href="product-info.html?product=4">
+                        <img class="product4" src="https://m.media-amazon.com/images/I/714pjo+YaML._AC_AA360_.jpg" alt="Fog Liquid">
+                        <h3 class="product4">Fog Machine Liquid - 32oz High Density & Long-Lasting Fog Juice</h3>
+                    </a>
+                    <p class="product4">$19.99</p>
+                    <a href="cart.html" class="btn" onclick="addToCart('4', 'price_1QxPLvEPrNsWeR47guGk0Wpa', event)">Add to Cart</a>
+              </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+          <div class="footer-top">
+            <img src="imgs/logo.png" alt="Kerfunkle">
+          </div>
+          <div class="footer-divider"></div>
+          <div class="footer-bottom">
+            <div class="footer-left">
+                <p>&copy; 2025 Kerfunkle. All rights reserved.</p>
+            </div>
+            <div class="footer-links">
+                <a href="policy.html?policy=privacy">Privacy Policy</a>
+                <a href="policy.html?policy=refund">Refund Policy</a>
+                <a href="policy.html?policy=terms">Terms of Service</a>
+            </div>
+          </div>
+        </div>
+    </footer>
+</body>
+</html>
