@@ -57,6 +57,17 @@ if (process.env.NODE_ENV !== 'production') {
   }));
 }
 
+// Add startup logging
+logger.info('========================');
+logger.info('Application starting up');
+logger.info(`Node environment: ${process.env.NODE_ENV}`);
+logger.info(`PORT: ${process.env.PORT}`);
+logger.info('Database: Connection string exists: ' + !!process.env.MONGODB_URI);
+logger.info('JWT: Secret exists: ' + !!process.env.JWT_SECRET);
+logger.info('Stripe: API key exists: ' + !!process.env.STRIPE_SECRET_KEY);
+logger.info('Frontend URL: ' + process.env.FRONTEND_URL);
+logger.info('========================');
+
 // Global error handler middleware
 const errorHandler = (err, req, res, next) => {
   logger.error({
