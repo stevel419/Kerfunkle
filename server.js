@@ -1,3 +1,13 @@
+process.on('uncaughtException', (err) => {
+    console.error('Uncaught Exception:', err);
+    process.exit(1); // Exit with failure code
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection:', reason);
+    process.exit(1); // Exit with failure code
+});
+
 require('dotenv').config();
 
 // Environment variable validation
