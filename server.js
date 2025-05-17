@@ -233,7 +233,7 @@ const sendLoginCode = async (email, code) => {
 const path = require('path');
 // Serve static files from /public
 app.use(express.static(path.join(__dirname, 'public')));
-// Redirect root to home.html since I don’t have index.html
+// Redirect root to home.html since I don't have index.html
 app.get('/', (req, res) => {
   res.redirect('/home.html');
 });

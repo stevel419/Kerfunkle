@@ -8,7 +8,7 @@ async function addToCart(prodNum, priceId, event) {
 
     let token = sessionStorage.getItem("authToken");
     if (token) {
-        const response = await fetch("https://kerfunkle.com/api/add-to-cart", {
+        const response = await fetch("/api/add-to-cart", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
