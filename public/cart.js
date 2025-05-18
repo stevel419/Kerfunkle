@@ -13,16 +13,16 @@ window.onload = async function() {
         let cartItems = JSON.parse(cart);
         cartItems.forEach(item => {
             let prodId = item.prodNum;
-            cartContents = "<div class=\"item\">\n"
+            cartContents = "<div class=\"item\" data-prod-id=\"" + prodId + "\">\n"
                 + "<a href=\"product-info.html?product="+prodId+"\">"
                 + "<img class=\"item"+prodId+"\" src=\""+item.imgsrc+"\" alt=\""+item.prodName+"\"/>\n"
                 + "<h1 class=\"item"+prodId+"\">"+item.prodName+"</h1></a>\n"
                 + "<div class=\"quantity-controls\">\n"
-                + "<button class=\"minus\" onclick=\"changeQuantity('minus', '"+prodId+"')\">-</button>\n"
+                + "<button class=\"minus\">-</button>\n"
                 + "<h2 id=\"quant"+prodId+"\">"+item.quantity+"</h2>\n"
-                + "<button class=\"plus\" onclick=\"changeQuantity('plus', '"+prodId+"')\">+</button>\n</div>\n"
+                + "<button class=\"plus\">+</button>\n</div>\n"
                 + "<h3 class=\"item"+prodId+"\">"+item.prodPrice+"</h3>\n"
-                + "<button class=\"remove-btn\" onclick=\"removeItem('"+prodId+"')\">&#10005;</button>\n</div>\n"
+                + "<button class=\"remove-btn\">&#10005;</button>\n</div>\n"
                 + cartContents;
         });
         cartContents += "<button id=\"checkout-button\">Checkout</button>"
@@ -41,8 +41,34 @@ window.onload = async function() {
                 initialize(cart);
             }
             else {
-                throw new error("Cart is empty.");
+                throw new Error("Cart is empty.");
             }
+        });
+
+        // Event listeners for quantity change and remove buttons
+        const minusButtons = document.querySelectorAll('.minus');
+        const plusButtons = document.querySelectorAll('.plus');
+        const removeButtons = document.querySelectorAll('.remove-btn');
+
+        minusButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                let prodId = this.closest('.item').getAttribute('data-prod-id');
+                changeQuantity('minus', prodId);
+            });
+        });
+
+        plusButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                let prodId = this.closest('.item').getAttribute('data-prod-id');
+                changeQuantity('plus', prodId);
+            });
+        });
+
+        removeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                let prodId = this.closest('.item').getAttribute('data-prod-id');
+                removeItem(prodId);
+            });
         });
     }
 
