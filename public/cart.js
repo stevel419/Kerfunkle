@@ -74,13 +74,13 @@ window.onload = async function() {
 
     // Create a Checkout Session
     async function initialize(cart) {
-        const stripe = Stripe("pk_test_51QgHTlEPrNsWeR47dkgDdtixe0rOSbrAm2MaTqYiIGx4zB4NwD8rjVdo6CRmy32TLltuaTNju21M8kXbDWpknyri0032d54G9b");
+        const stripe = Stripe("pk_live_51QgHTdCflHEhVRvmVjR75geX7EbEmB26TcOJEZJiWfLEv1crzLAw1XswfPm2nQFmyrMcCEztoeklYmxkg0KMUyDl00dwGxynqK");
         const fetchClientSecret = async () => {
             const cartForStripe = JSON.parse(cart).map(item => ({
                 price: item.priceId,
                 quantity: item.quantity,
             }));
-            //RECONFIGURE BEFORE PRODUCTION - https://api.yourdomain.com
+
             const response = await fetch("/create-checkout-session", {
                 method: "POST",
                 headers: {
