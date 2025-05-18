@@ -21,6 +21,7 @@ async function addToCart(prodNum, priceId, event) {
     saveToStorage(priceId, prodNum, imgsrc, prodName, prodPrice);
     window.location.href = "cart.html";
 }
+
 function saveToStorage(priceId, prodNum, imgsrc, prodName, prodPrice) {
     let cart = sessionStorage.getItem("cart");
     let cartItems = cart ? JSON.parse(cart) : [];

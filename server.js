@@ -1,13 +1,3 @@
-process.on('uncaughtException', (err) => {
-    console.error('Uncaught Exception:', err);
-    process.exit(1); // Exit with failure code
-});
-
-process.on('unhandledRejection', (reason, promise) => {
-    console.error('Unhandled Rejection:', reason);
-    process.exit(1); // Exit with failure code
-});
-
 require('dotenv').config();
 
 // Environment variable validation
@@ -67,17 +57,6 @@ if (process.env.NODE_ENV !== 'production') {
   }));
 }
 
-// Add startup logging
-logger.info('========================');
-logger.info('Application starting up');
-logger.info(`Node environment: ${process.env.NODE_ENV}`);
-logger.info(`PORT: ${process.env.PORT}`);
-logger.info('Database: Connection string exists: ' + !!process.env.MONGODB_URI);
-logger.info('JWT: Secret exists: ' + !!process.env.JWT_SECRET);
-logger.info('Stripe: API key exists: ' + !!process.env.STRIPE_SECRET_KEY);
-logger.info('Frontend URL: ' + process.env.FRONTEND_URL);
-logger.info('========================');
-
 // Global error handler middleware
 const errorHandler = (err, req, res, next) => {
   logger.error({
@@ -120,7 +99,7 @@ app.use(helmet.contentSecurityPolicy({
     defaultSrc: ["'self'"],
     scriptSrc: ["'self'", "js.stripe.com"],
     styleSrc: ["'self'", "'unsafe-inline'"],
-    imgSrc: ["'self'", "data:", "*.stripe.com"],
+    imgSrc: ["'self'", "data:", "*.stripe.com", "m.media-amazon.com", "www.w3.org"],
     connectSrc: ["'self'", "api.stripe.com"],
     frameSrc: ["'self'", "js.stripe.com", "hooks.stripe.com"],
     fontSrc: ["'self'"]

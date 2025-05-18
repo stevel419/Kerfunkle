@@ -87,42 +87,7 @@
           <button class="carousel-nav-btn"></button>
         </div>
     </section>
-    <script>
-        // Carousel Functionality
-        let currentSlide = 0;
-        const slides = document.querySelectorAll('.carousel-slide');
-        const navigationButtons = document.querySelectorAll('.carousel-nav-btn');
-        const slideContents = document.querySelectorAll('.carousel-slide-content');
-        const totalSlides = slides.length;
-    
-        function updateCarousel() {
-          // Update the active slide
-          const slideWidth = slides[0].offsetWidth;
-          document.querySelector('.carousel-slides').style.transform = `translateX(-${currentSlide * slideWidth}px)`;
-          // Update navigation buttons
-          navigationButtons.forEach((button, index) => {
-            button.classList.toggle('active', index === currentSlide);
-          });
-          // Update slide content visibility
-          slideContents.forEach((content, index) => {
-            content.classList.toggle('active', index === currentSlide);
-          });
-        }
-        // Add event listener to navigation buttons
-        navigationButtons.forEach((button, index) => {
-          button.addEventListener('click', () => {
-            currentSlide = index;
-            updateCarousel();
-          });
-        });
-        // Auto-slide functionality
-        setInterval(() => {
-          currentSlide = (currentSlide + 1) % totalSlides;
-          updateCarousel();
-        }, 5000);
-    
-        updateCarousel();
-    </script>
+    <script src="carousel.js"></script>
 
     <!-- Banner -->
     <section class="banner">
@@ -131,26 +96,7 @@
             </div>
         </div>
     </section>
-    <script>
-        window.addEventListener('resize', adjustBanner); // Run on window resize
-        document.addEventListener('DOMContentLoaded', adjustBanner); // Run when page loads
-        function adjustBanner() {
-            const bannerContainer = document.querySelector('.banner-container');
-            const bannerContent = document.querySelector('.banner-content');
-            const phrase = 'KERFUNKLE - WHERE THE FUN BEGINS!';
-            const containerWidth = bannerContainer.offsetWidth; // Get the width of the container
-            // Clear the current content in the banner
-            bannerContent.innerHTML = '';
-            // Calculate how many times the phrase can fit within the container width
-            const numberOfPhrases = Math.ceil(containerWidth / 250) * 3;
-            // Add the phrases dynamically
-            for (let i = 0; i < numberOfPhrases; i++) {
-                const phraseDiv = document.createElement('div');
-                phraseDiv.textContent = phrase;
-                bannerContent.appendChild(phraseDiv);
-            }
-        }
-    </script>
+    <script src="banner.js"></script>
 
     <!-- Product Listings -->
     <section class="products">
@@ -164,7 +110,7 @@
                         <h3 class="product1">100ft RGB LED Strip Lights - 2 Rolls of 50ft with Remote and App Control</h3>
                     </a>
                     <p class="product1">$9.99</p>
-                    <a href="cart.html" class="btn" onclick="addToCart('1', 'price_1QgHY6EPrNsWeR47bKK0sOy5', event)">Add to Cart</a>
+                    <a href="cart.html" class="btn" id="product1Btn">Add to Cart</a>
                 </div>
                 <div class="product-card">
                     <a href="product-info.html?product=2">
@@ -172,7 +118,7 @@
                         <h3 class="product2">Disco Ball - Sound Activated Party Lights with Remote Control</h3>
                     </a>
                     <p class="product2">$15.99</p>
-                    <a href="cart.html" class="btn" onclick="addToCart('2', 'price_1QiVw5EPrNsWeR47HrjbAAOs', event)">Add to Cart</a>
+                    <a href="cart.html" class="btn" id="product2Btn">Add to Cart</a>
                 </div>
                 <div class="product-card">
                     <a href="product-info.html?product=3">
@@ -180,7 +126,7 @@
                         <h3 class="product3">Fog Machine - 72 LED Lights, 500W and 2000 CFM Spray, Remote Control</h3>
                     </a>
                     <p class="product3">$34.99</p>
-                    <a href="cart.html" class="btn" onclick="addToCart('3', 'price_1QgfUoEPrNsWeR47GjKeIxj8', event)">Add to Cart</a>
+                    <a href="cart.html" class="btn" id="product3Btn">Add to Cart</a>
                 </div>
                 <div class="product-card">
                     <a href="product-info.html?product=4">
@@ -188,11 +134,12 @@
                         <h3 class="product4">Fog Machine Liquid - 32oz High Density & Long-Lasting Fog Juice</h3>
                     </a>
                     <p class="product4">$19.99</p>
-                    <a href="cart.html" class="btn" onclick="addToCart('4', 'price_1QxPLvEPrNsWeR47guGk0Wpa', event)">Add to Cart</a>
+                    <a href="cart.html" class="btn" id="product4Btn">Add to Cart</a>
               </div>
             </div>
         </div>
     </section>
+    <script src="addToCartBtn.js"></script>
 
     <!-- Footer -->
     <footer>
