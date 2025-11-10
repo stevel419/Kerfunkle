@@ -15,7 +15,7 @@ Product.create!(
   description: "Transform your space with these versatile LED strip lights. Features include RGB color changing, remote control, and app connectivity for easy customization. Perfect for parties, room decoration, and ambient lighting.",
   price: 12.99,
   product_number: "PROD001",
-  stripe_price_id: "price_led_strip_lights", # Update with actual Stripe price ID
+  stripe_price_id: "price_1RPz9PCflHEhVRvmHHFuFE6j", # Production Stripe price ID
   image_url: "https://m.media-amazon.com/images/I/51i6YjrXxJL._MCnd_AC_.jpg",
   category: "LED Lights",
   position: 1,
@@ -28,7 +28,7 @@ Product.create!(
   description: "Create an instant party atmosphere with this sound-activated disco ball. Features multiple color modes, remote control operation, and automatic sound sync for dynamic lighting effects.",
   price: 15.99,
   product_number: "PROD002",
-  stripe_price_id: "price_disco_ball", # Update with actual Stripe price ID
+  stripe_price_id: "price_1RPzIbCflHEhVRvmOEp67eH5", # Production Stripe price ID
   image_url: "https://m.media-amazon.com/images/I/41A6iTSM3KL._MCnd_AC_.jpg",
   category: "Disco Balls",
   position: 2,
@@ -41,7 +41,7 @@ Product.create!(
   description: "Professional-grade fog machine with built-in LED lights. Features 500W power, 2000 CFM output, and wireless remote control. Perfect for parties, events, and theatrical productions.",
   price: 34.99,
   product_number: "PROD003",
-  stripe_price_id: "price_fog_machine", # Update with actual Stripe price ID
+  stripe_price_id: "price_1RPzOmCflHEhVRvmCHPgceSa", # Production Stripe price ID
   image_url: "https://m.media-amazon.com/images/I/51RI5DGFhuL._MCnd_AC_.jpg",
   category: "Fog Machines",
   position: 3,
@@ -54,7 +54,7 @@ Product.create!(
   description: "Premium quality fog juice designed for optimal performance. High density formula produces thick, long-lasting fog. Safe, non-toxic, and water-based. 32oz bottle provides extended use.",
   price: 19.99,
   product_number: "PROD004",
-  stripe_price_id: "price_fog_liquid", # Update with actual Stripe price ID
+  stripe_price_id: "price_1RPzSpCflHEhVRvmv0c6luZx", # Production Stripe price ID
   image_url: "https://m.media-amazon.com/images/I/714pjo+YaML._AC_AA360_.jpg",
   category: "Accessories",
   position: 4,
