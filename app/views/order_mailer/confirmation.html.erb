@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      text-align: center;
+      padding: 20px 0;
+      border-bottom: 2px solid #9333EA;
+      margin-bottom: 20px;
+    }
+    .order-details {
+      background: #F9FAFB;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    .order-items {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0;
+    }
+    .order-items th,
+    .order-items td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #E5E7EB;
+    }
+    .order-items th {
+      background: #F3F4F6;
+      font-weight: bold;
+    }
+    .total {
+      font-size: 18px;
+      font-weight: bold;
+      color: #9333EA;
+    }
+    .footer {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #E5E7EB;
+      font-size: 14px;
+      color: #6B7280;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <%= image_tag attachments.inline['logo.png'].url, alt: 'Kerfunkle', style: 'width: 200px; height: auto; margin-bottom: 10px;' %>
+      <p style="margin: 0; font-size: 18px; color: #6B7280;">Order Confirmation</p>
+    </div>
+
+    <h2>Thank you for your order!</h2>
+
+    <p>Hi <%= @user&.email || @order.customer_email %>,</p>
+
+    <p>Your order has been successfully placed and payment has been processed. Here are the details:</p>
+
+    <div class="order-details">
+      <h3>Order #<%= @order.id %></h3>
+      <p><strong>Order Date:</strong> <%= @order.created_at.strftime('%B %d, %Y at %I:%M %p') %></p>
+      <p><strong>Status:</strong> <%= @order.status.titleize %></p>
+    </div>
+
+    <h3>Order Items</h3>
+    <table class="order-items">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Quantity</th>
+          <th>Price</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @order.order_items.each do |item| %>
+          <tr>
+            <td><%= item.product_name %></td>
+            <td><%= item.quantity %></td>
+            <td><%= number_to_currency(item.price_at_purchase) %></td>
+            <td><%= number_to_currency(item.subtotal) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <div class="order-details">
+      <p class="total">Total: <%= number_to_currency(@order.total_amount) %></p>
+    </div>
+
+    <% if @order.shipping_address.present? && @order.shipping_address['name'] %>
+      <h3>Shipping Information</h3>
+      <div class="order-details">
+        <p><strong><%= @order.shipping_address['name'] %></strong></p>
+        <p><%= @order.shipping_address['line1'] %></p>
+        <% if @order.shipping_address['line2'].present? %>
+          <p><%= @order.shipping_address['line2'] %></p>
+        <% end %>
+        <p><%= @order.shipping_address['city'] %>, <%= @order.shipping_address['state'] %> <%= @order.shipping_address['postal_code'] %></p>
+        <p><%= @order.shipping_address['country'] %></p>
+      </div>
+    <% end %>
+
+    <div class="footer">
+      <p>Thank you for shopping with Kerfunkle! If you have any questions about your order, please don't hesitate to contact us.</p>
+      <p>Party hard with Kerfunkle! 🎉</p>
+    </div>
+  </div>
+</body>
+</html>

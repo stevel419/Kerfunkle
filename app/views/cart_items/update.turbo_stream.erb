@@ -1,0 +1,26 @@
+<%= turbo_stream.replace "cart-item-#{@cart_item.id}" do %>
+  <%= render partial: "cart/cart_item", locals: { item: @cart_item, index: @cart_item.cart.cart_items.order(created_at: :asc).index(@cart_item) } %>
+<% end %>
+
+<%= turbo_stream.replace "order-summary" do %>
+  <%= render partial: "cart/order_summary", locals: { cart_items: @cart_item.cart.cart_items.includes(:product).order(created_at: :asc) } %>
+<% end %>
+
+<%= turbo_stream.replace "cart-badge-header" do %>
+  <% cart_items = @cart_item.cart.cart_items %>
+  <% if cart_items.any? %>
+    <span class="header-badge"><%= cart_items.sum(:quantity) %></span>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.replace "cart-badge-sidebar" do %>
+  <% cart_items = @cart_item.cart.cart_items %>
+  <% if cart_items.any? %>
+    <span class="sidebar-badge"><%= cart_items.sum(:quantity) %></span>
+  <% end %>
+<% end %>
+
+
+
+
+

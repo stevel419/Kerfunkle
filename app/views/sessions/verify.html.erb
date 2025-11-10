@@ -1,0 +1,37 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-md w-full space-y-8">
+    <div>
+      <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        Enter Verification Code
+      </h2>
+      <p class="mt-2 text-center text-sm text-gray-600">
+        We sent a 6-digit code to <strong><%= @email %></strong>
+      </p>
+    </div>
+    
+    <%= form_with url: verify_sessions_path, method: :post, class: "mt-8 space-y-6" do |f| %>
+      <div class="rounded-md shadow-sm -space-y-px">
+        <div>
+          <label for="code" class="sr-only">Verification Code</label>
+          <%= text_field_tag :code, nil,
+              class: "appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 text-center text-2xl tracking-widest focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10",
+              placeholder: "000000",
+              maxlength: 6,
+              pattern: "[0-9]{6}",
+              required: true,
+              autofocus: true %>
+        </div>
+      </div>
+      
+      <div>
+        <%= f.submit "Verify & Sign In",
+            class: "group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 cursor-pointer" %>
+      </div>
+    <% end %>
+    
+    <div class="text-center space-y-2">
+      <p class="text-sm text-gray-600">Didn't receive the code?</p>
+      <%= link_to "Request a new code", login_path, class: "text-purple-600 hover:text-purple-500" %>
+    </div>
+  </div>
+</div>

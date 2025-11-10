@@ -1,0 +1,35 @@
+<%= turbo_stream.remove "cart-item-#{@cart_item.id}" %>
+
+<% cart = cart_for_current_context %>
+<% if cart.cart_items.empty? %>
+  <%= turbo_stream.replace "cart-page-content" do %>
+    <!-- Empty Cart State -->
+    <div class="empty-cart-container">
+      <div class="empty-cart-content">
+        <div class="empty-cart-image-wrapper">
+          <svg class="empty-cart-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <circle cx="9" cy="21" r="1" stroke-width="2"></circle>
+            <circle cx="20" cy="21" r="1" stroke-width="2"></circle>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </div>
+        <h1 class="empty-cart-title">Your cart is empty</h1>
+        <p class="empty-cart-text">Looks like you haven't added any items to your cart yet.</p>
+        <%= link_to products_path, class: "empty-cart-button" do %>
+          Continue Shopping
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+<% else %>
+  <%= turbo_stream.replace "order-summary" do %>
+    <%= render partial: "cart/order_summary", locals: { cart_items: cart.cart_items.includes(:product) } %>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.replace "cart-badge" do %>
+  <% if cart.cart_items.any? %>
+    <span class="header-badge"><%= cart.cart_items.sum(:quantity) %></span>
+  <% end %>
+<% end %>
+

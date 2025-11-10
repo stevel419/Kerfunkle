@@ -1,0 +1,127 @@
+<div class="max-w-7xl mx-auto px-4 py-8">
+  <h1 class="text-3xl font-bold text-gray-900 mb-8">Shopping Cart</h1>
+  
+  <%= turbo_frame_tag "cart_contents" do %>
+    <% if @cart_items.any? %>
+      <div class="bg-white rounded-lg shadow-md">
+        <!-- Cart Items -->
+        <div class="divide-y divide-gray-200">
+          <% @cart_items.each_with_index do |cart_item, index| %>
+            <% product = logged_in? ? cart_item.product : cart_item.product %>
+            <% item_id = logged_in? ? cart_item.id : cart_item.product_id %>
+            <% quantity = logged_in? ? cart_item.quantity : cart_item.quantity %>
+            <% subtotal = product.price * quantity %>
+            
+            <%= turbo_frame_tag "cart_item_#{item_id}", class: "block" do %>
+              <div class="p-6 flex items-center space-x-6">
+                <!-- Product Image -->
+                <div class="flex-shrink-0">
+                  <%= link_to product_path(product) do %>
+                    <%= image_tag product.image_url, 
+                        class: "h-24 w-24 object-cover rounded-md",
+                        alt: product.name %>
+                  <% end %>
+                </div>
+                
+                <!-- Product Info -->
+                <div class="flex-1 min-w-0">
+                  <h3 class="text-lg font-semibold text-gray-900">
+                    <%= link_to product.name, product_path(product), class: "hover:text-purple-600" %>
+                  </h3>
+                  <p class="text-lg font-bold text-gray-900 mt-1">
+                    <%= product.formatted_price %>
+                  </p>
+                </div>
+                
+                <!-- Quantity Controls -->
+                <div class="flex items-center space-x-3">
+                  <%= form_with(url: cart_item_path(item_id), method: :patch, data: { turbo_frame: "cart_contents" }) do |f| %>
+                    <div class="flex items-center border border-gray-300 rounded-md">
+                      <%= button_tag type: "submit", name: "quantity", value: [quantity - 1, 1].max,
+                          class: "px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100",
+                          disabled: quantity <= 1 do %>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
+                        </svg>
+                      <% end %>
+                      
+                      <span class="px-4 py-2 text-gray-900 font-medium">
+                        <%= quantity %>
+                      </span>
+                      
+                      <%= button_tag type: "submit", name: "quantity", value: quantity + 1,
+                          class: "px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100" do %>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                      <% end %>
+                    </div>
+                  <% end %>
+                </div>
+                
+                <!-- Subtotal -->
+                <div class="text-right w-24">
+                  <p class="text-lg font-bold text-gray-900">
+                    $<%= '%.2f' % subtotal %>
+                  </p>
+                </div>
+                
+                <!-- Remove Button -->
+                <div>
+                  <%= button_to cart_item_path(item_id), method: :delete,
+                      data: { turbo_frame: "cart_contents", turbo_confirm: "Remove #{product.name} from cart?" },
+                      class: "text-red-600 hover:text-red-800" do %>
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+        
+        <!-- Cart Summary -->
+        <div class="border-t border-gray-200 p-6 bg-gray-50">
+          <div class="flex items-center justify-between mb-6">
+            <div class="text-left">
+              <p class="text-sm text-gray-600"><%= pluralize(@cart.total_items, 'item') %> in cart</p>
+            </div>
+            <div class="text-right">
+              <p class="text-sm text-gray-600 mb-1">Total</p>
+              <p class="text-3xl font-bold text-gray-900">
+                $<%= '%.2f' % @cart.total_price %>
+              </p>
+            </div>
+          </div>
+          
+          <div class="flex space-x-4">
+            <%= link_to "Continue Shopping", products_path, class: "flex-1 bg-gray-200 text-gray-900 px-6 py-3 rounded-md font-medium text-center hover:bg-gray-300 transition-colors" %>
+            
+            <% if logged_in? %>
+              <%= link_to "Checkout", checkout_path, class: "flex-1 bg-purple-600 text-white px-6 py-3 rounded-md font-medium text-center hover:bg-purple-700 transition-colors" %>
+            <% else %>
+              <%= link_to "Login to Checkout", login_path, class: "flex-1 bg-purple-600 text-white px-6 py-3 rounded-md font-medium text-center hover:bg-purple-700 transition-colors" %>
+            <% end %>
+          </div>
+          
+          <% unless logged_in? %>
+            <p class="text-sm text-gray-600 text-center mt-4">
+              Please log in to complete your purchase. Your cart will be saved!
+            </p>
+          <% end %>
+        </div>
+      </div>
+    <% else %>
+      <!-- Empty Cart State -->
+      <div class="text-center py-16">
+        <svg class="mx-auto h-24 w-24 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+        </svg>
+        <h2 class="mt-6 text-2xl font-semibold text-gray-900">Your cart is empty</h2>
+        <p class="mt-2 text-gray-600">Add some party essentials to get started!</p>
+        <%= link_to "Browse Products", products_path, class: "mt-6 inline-block bg-purple-600 text-white px-8 py-3 rounded-md font-medium hover:bg-purple-700 transition-colors" %>
+      </div>
+    <% end %>
+  <% end %>
+</div>

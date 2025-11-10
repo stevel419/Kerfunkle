@@ -1,0 +1,70 @@
+<div id="order-summary" class="order-summary-card">
+  <div class="order-summary-header">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <path d="M16 10a4 4 0 0 1-8 0"></path>
+    </svg>
+    <h2 class="order-summary-title">Order Summary</h2>
+  </div>
+
+  <div class="order-summary-content">
+    <div class="summary-row">
+      <span class="summary-label">Subtotal</span>
+      <span class="summary-value"><%= number_to_currency(cart_items.sum { |item| item.product.price * item.quantity }) %></span>
+    </div>
+    
+    <% 
+      subtotal = cart_items.sum { |item| item.product.price * item.quantity }
+      shipping = subtotal > 100 ? 0 : 9.99
+      tax = subtotal * 0.08
+      total = subtotal + shipping + tax
+    %>
+    
+    <div class="summary-row">
+      <span class="summary-label">Shipping</span>
+      <span class="summary-value <%= 'free-shipping' if shipping == 0 %>">
+        <%= shipping == 0 ? 'Free' : number_to_currency(shipping) %>
+      </span>
+    </div>
+    
+    <div class="summary-row">
+      <span class="summary-label">Tax</span>
+      <span class="summary-value"><%= number_to_currency(tax) %></span>
+    </div>
+    
+    <div class="summary-divider"></div>
+    
+    <div class="summary-row summary-total">
+      <span class="summary-total-label">Total</span>
+      <span class="summary-total-value"><%= number_to_currency(total) %></span>
+    </div>
+
+    <% if shipping > 0 %>
+      <div class="shipping-notice">
+        <p>Add <%= number_to_currency(100 - subtotal) %> more for free shipping! 🚚</p>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="order-summary-footer">
+    <% if logged_in? %>
+      <%= link_to new_checkout_path, class: "checkout-button" do %>
+        Proceed to Checkout
+      <% end %>
+    <% else %>
+      <%= link_to login_path, class: "checkout-button" do %>
+        Sign In to Checkout
+      <% end %>
+    <% end %>
+    
+    <%= link_to products_path, class: "continue-shopping-button" do %>
+      Continue Shopping
+    <% end %>
+  </div>
+</div>
+
+
+
+
+

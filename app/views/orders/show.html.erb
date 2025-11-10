@@ -1,0 +1,612 @@
+<div class="order-detail-page">
+  <!-- Order Detail Header -->
+  <section class="order-detail-header">
+    <div class="order-detail-container">
+      <div class="header-top">
+        <%= link_to orders_path, class: "back-link" do %>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7"></path>
+          </svg>
+          Back to Orders
+        <% end %>
+      </div>
+      <div class="header-content">
+        <div class="header-info">
+          <h1 class="order-detail-title">Order #<%= @order.id %></h1>
+          <div class="order-detail-meta">
+            <span class="meta-item">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              Placed on <%= @order.created_at.strftime('%B %d, %Y at %I:%M %p') %>
+            </span>
+            <% if @order.paid_at %>
+              <span class="meta-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                Paid on <%= @order.paid_at.strftime('%B %d, %Y') %>
+              </span>
+            <% end %>
+          </div>
+        </div>
+        <span class="status-badge-large <%= @order.status %>">
+          <span class="status-dot"></span>
+          <%= @order.status.titleize %>
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Order Content -->
+  <section class="order-detail-content">
+    <div class="order-detail-container">
+      <div class="content-grid">
+        <!-- Order Items -->
+        <div class="content-section">
+          <div class="section-card">
+            <div class="section-header">
+              <h2 class="section-title">Order Items</h2>
+              <span class="item-count"><%= pluralize(@order_items.count, 'item') %></span>
+            </div>
+            <div class="section-content">
+              <div class="items-list">
+                <% @order_items.each do |item| %>
+                  <div class="detail-item">
+                    <div class="detail-item-image">
+                      <%= image_tag item.product_image_url, alt: item.product_name %>
+                    </div>
+                    <div class="detail-item-info">
+                      <h3 class="detail-item-name"><%= item.product_name %></h3>
+                      <div class="detail-item-meta">
+                        <span class="detail-item-quantity">Quantity: <%= item.quantity %></span>
+                        <span class="detail-item-price">
+                          <%= number_to_currency(item.price_at_purchase) %> each
+                        </span>
+                      </div>
+                    </div>
+                    <div class="detail-item-total">
+                      <%= number_to_currency(item.price_at_purchase * item.quantity) %>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+
+              <!-- Order Summary -->
+              <div class="order-summary">
+                <div class="summary-row">
+                  <span class="summary-label">Subtotal</span>
+                  <span class="summary-value"><%= number_to_currency(@order_items.sum { |item| item.price_at_purchase * item.quantity }) %></span>
+                </div>
+                <div class="summary-row">
+                  <span class="summary-label">Shipping</span>
+                  <span class="summary-value">Free</span>
+                </div>
+                <div class="summary-row">
+                  <span class="summary-label">Tax</span>
+                  <span class="summary-value">$0.00</span>
+                </div>
+                <div class="summary-divider"></div>
+                <div class="summary-row total">
+                  <span class="summary-label">Total</span>
+                  <span class="summary-value"><%= number_to_currency(@order.total_amount) %></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order Information Sidebar -->
+        <div class="sidebar-section">
+          <!-- Customer Information -->
+          <div class="section-card">
+            <div class="section-header">
+              <h2 class="section-title">Customer Information</h2>
+            </div>
+            <div class="section-content">
+              <div class="info-group">
+                <div class="info-label">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                    <polyline points="22,6 12,13 2,6"></polyline>
+                  </svg>
+                  Email
+                </div>
+                <div class="info-value"><%= @order.customer_email || @order.user.email %></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Shipping Address -->
+          <% if @order.shipping_address.present? && @order.shipping_address.is_a?(Hash) %>
+            <div class="section-card">
+              <div class="section-header">
+                <h2 class="section-title">Shipping Address</h2>
+              </div>
+              <div class="section-content">
+                <div class="address-display">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                  <div class="address-text">
+                    <% if @order.shipping_address['line1'] %>
+                      <%= @order.shipping_address['line1'] %><br>
+                    <% end %>
+                    <% if @order.shipping_address['line2'] %>
+                      <%= @order.shipping_address['line2'] %><br>
+                    <% end %>
+                    <% if @order.shipping_address['city'] %>
+                      <%= @order.shipping_address['city'] %>, 
+                    <% end %>
+                    <% if @order.shipping_address['state'] %>
+                      <%= @order.shipping_address['state'] %> 
+                    <% end %>
+                    <% if @order.shipping_address['postal_code'] %>
+                      <%= @order.shipping_address['postal_code'] %>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% end %>
+
+          <!-- Payment Information -->
+          <div class="section-card">
+            <div class="section-header">
+              <h2 class="section-title">Payment Information</h2>
+            </div>
+            <div class="section-content">
+              <div class="info-group">
+                <div class="info-label">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                    <line x1="1" y1="10" x2="23" y2="10"></line>
+                  </svg>
+                  Payment Method
+                </div>
+                <div class="info-value">Credit Card</div>
+              </div>
+              <% if @order.stripe_payment_intent_id %>
+                <div class="info-group">
+                  <div class="info-label">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                      <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                    </svg>
+                    Transaction ID
+                  </div>
+                  <div class="info-value small"><%= @order.stripe_payment_intent_id.first(20) %>...</div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<style>
+/* Order Detail Page Styles */
+.order-detail-page {
+  background: #f8f9fa;
+  min-height: calc(100vh - 60px);
+}
+
+/* Order Detail Header */
+.order-detail-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 2rem 0 2.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.order-detail-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.header-top {
+  margin-bottom: 1.5rem;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  opacity: 0.9;
+  transition: all 0.2s;
+}
+
+.back-link:hover {
+  opacity: 1;
+  transform: translateX(-4px);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.header-info {
+  color: white;
+}
+
+.order-detail-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.order-detail-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  opacity: 0.95;
+}
+
+.status-badge-large {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.status-badge-large .status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+/* Status colors (same as index page) */
+.status-badge-large.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status-badge-large.pending .status-dot {
+  background: #f59e0b;
+}
+
+.status-badge-large.processing {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.status-badge-large.processing .status-dot {
+  background: #3b82f6;
+}
+
+.status-badge-large.paid {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status-badge-large.paid .status-dot {
+  background: #10b981;
+}
+
+.status-badge-large.shipped {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.status-badge-large.shipped .status-dot {
+  background: #6366f1;
+}
+
+.status-badge-large.completed {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status-badge-large.completed .status-dot {
+  background: #10b981;
+}
+
+.status-badge-large.cancelled {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.status-badge-large.cancelled .status-dot {
+  background: #ef4444;
+}
+
+/* Order Content */
+.order-detail-content {
+  padding: 2rem 0 3rem;
+  margin-top: -1rem;
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 1.5rem;
+}
+
+.content-section {
+  min-width: 0;
+}
+
+.sidebar-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Section Card */
+.section-card {
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.section-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: hsl(var(--foreground));
+}
+
+.item-count {
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+  background: #f8f9fa;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+}
+
+.section-content {
+  padding: 1.5rem;
+}
+
+/* Items List */
+.items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.detail-item {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.detail-item-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #f8f9fa;
+}
+
+.detail-item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.detail-item-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.detail-item-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  line-height: 1.4;
+}
+
+.detail-item-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+}
+
+.detail-item-quantity {
+  font-weight: 500;
+}
+
+.detail-item-total {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #10b981;
+  flex-shrink: 0;
+}
+
+/* Order Summary */
+.order-summary {
+  border-top: 2px solid #e9ecef;
+  padding-top: 1.5rem;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+}
+
+.summary-row.total {
+  margin-top: 0.5rem;
+}
+
+.summary-label {
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+}
+
+.summary-row.total .summary-label {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: hsl(var(--foreground));
+}
+
+.summary-value {
+  font-weight: 600;
+  color: hsl(var(--foreground));
+}
+
+.summary-row.total .summary-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #10b981;
+}
+
+.summary-divider {
+  height: 1px;
+  background: #e9ecef;
+  margin: 0.5rem 0;
+}
+
+/* Info Groups */
+.info-group {
+  padding: 1rem 0;
+}
+
+.info-group:not(:last-child) {
+  border-bottom: 1px solid #e9ecef;
+}
+
+.info-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+}
+
+.info-label svg {
+  opacity: 0.7;
+}
+
+.info-value {
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  word-break: break-word;
+}
+
+.info-value.small {
+  font-size: 0.875rem;
+}
+
+/* Address Display */
+.address-display {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 0.5rem;
+}
+
+.address-display svg {
+  color: hsl(var(--primary));
+  flex-shrink: 0;
+}
+
+.address-text {
+  line-height: 1.6;
+  color: hsl(var(--foreground));
+}
+
+/* Animations */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 968px) {
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar-section {
+    order: 2;
+  }
+}
+
+@media (max-width: 768px) {
+  .order-detail-title {
+    font-size: 1.5rem;
+  }
+
+  .header-content {
+    flex-direction: column;
+  }
+
+  .detail-item {
+    flex-wrap: wrap;
+  }
+
+  .detail-item-total {
+    width: 100%;
+    text-align: right;
+  }
+}
+
+@media (max-width: 576px) {
+  .order-detail-header {
+    padding: 1.5rem 0 2rem;
+  }
+
+  .order-detail-content {
+    padding: 1.5rem 0 2rem;
+  }
+
+  .section-header,
+  .section-content {
+    padding: 1.25rem;
+  }
+
+  .detail-item-image {
+    width: 60px;
+    height: 60px;
+  }
+}
+</style>

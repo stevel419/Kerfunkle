@@ -1,0 +1,38 @@
+Kerfunkle - Order Confirmation #<%= @order.id %>
+
+Hi <%= @user&.email || @order.customer_email %>,
+
+Thank you for your order! Your payment has been processed successfully.
+
+ORDER DETAILS
+=============
+Order #: <%= @order.id %>
+Date: <%= @order.created_at.strftime('%B %d, %Y at %I:%M %p') %>
+Status: <%= @order.status.titleize %>
+Total: <%= number_to_currency(@order.total_amount) %>
+
+ORDER ITEMS
+===========
+<% @order.order_items.each do |item| %>
+<%= item.product_name %>
+  Quantity: <%= item.quantity %>
+  Price: <%= number_to_currency(item.price_at_purchase) %>
+  Subtotal: <%= number_to_currency(item.subtotal) %>
+<% end %>
+
+<% if @order.shipping_address.present? && @order.shipping_address['name'] %>
+SHIPPING INFORMATION
+===================
+<%= @order.shipping_address['name'] %>
+<%= @order.shipping_address['line1'] %>
+<% if @order.shipping_address['line2'].present? %>
+<%= @order.shipping_address['line2'] %>
+<% end %>
+<%= @order.shipping_address['city'] %>, <%= @order.shipping_address['state'] %> <%= @order.shipping_address['postal_code'] %>
+<%= @order.shipping_address['country'] %>
+<% end %>
+
+Thank you for shopping with Kerfunkle!
+Party hard with Kerfunkle! 🎉
+
+If you have any questions about your order, please don't hesitate to contact us.

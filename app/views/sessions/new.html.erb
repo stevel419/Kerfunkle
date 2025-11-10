@@ -1,0 +1,130 @@
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#dbedff] via-[#e8f4ff] to-white py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+  <!-- Decorative Elements -->
+  <div class="absolute top-20 left-10 w-32 h-32 bg-purple-400 rounded-full blur-3xl opacity-20 animate-float"></div>
+  <div class="absolute bottom-20 right-10 w-40 h-40 bg-pink-400 rounded-full blur-3xl opacity-20 animate-float animation-delay-1000"></div>
+  
+  <div class="max-w-md w-full relative z-10">
+    <!-- Logo -->
+    <div class="text-center mb-8">
+      <%= link_to root_path, class: "inline-block" do %>
+        <%= image_tag "/imgs/logo.png", alt: "Kerfunkle", class: "h-20 mx-auto drop-shadow-2xl hover:scale-110 transition-transform" %>
+      <% end %>
+    </div>
+
+    <!-- Login Card -->
+    <div class="bg-white rounded-3xl shadow-2xl p-8 md:p-12 space-y-8 backdrop-blur-lg border-2 border-gray-100 login-card">
+      <div class="text-center">
+        <h2 class="text-4xl font-black text-gray-900 mb-3">
+          Welcome Back! 👋
+        </h2>
+        <p class="text-lg text-gray-600">
+          Sign in to continue the party
+        </p>
+      </div>
+      
+      <%= form_with url: login_path, method: :post, class: "space-y-6" do |f| %>
+        <div>
+          <label for="email" class="block text-sm font-bold text-gray-900 mb-2">Email Address</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
+                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
+              </svg>
+            </div>
+            <%= email_field_tag :email, nil, 
+                class: "appearance-none relative block w-full pl-12 pr-4 py-4 border-2 border-gray-300 placeholder-gray-400 text-gray-900 rounded-xl focus:outline-none focus:ring-4 focus:ring-purple-300 focus:border-purple-500 text-lg font-medium transition-all",
+                placeholder: "you@example.com",
+                required: true,
+                autofocus: true %>
+          </div>
+        </div>
+        
+        <div>
+          <%= f.submit "Send Verification Code", 
+              class: "group relative w-full flex justify-center items-center gap-3 py-4 px-6 border border-transparent text-lg font-bold rounded-xl text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-purple-300 transition-all hover:scale-105 cursor-pointer" do %>
+            <span>Send Verification Code</span>
+            <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+            </svg>
+          <% end %>
+        </div>
+
+        <!-- Info Box -->
+        <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4 border-2 border-purple-100">
+          <div class="flex items-start gap-3">
+            <svg class="w-6 h-6 text-purple-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+            </svg>
+            <div>
+              <p class="text-sm font-bold text-gray-900 mb-1">Passwordless Login</p>
+              <p class="text-sm text-gray-600">We'll send a verification code to your email. No password needed!</p>
+            </div>
+          </div>
+        </div>
+      <% end %>
+      
+      <div class="text-center pt-6 border-t-2 border-gray-100">
+        <%= link_to root_path, class: "inline-flex items-center gap-2 text-gray-700 hover:text-purple-600 font-bold transition-colors" do %>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+          <span>Back to Shop</span>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Trust Badges -->
+    <div class="mt-8 flex items-center justify-center gap-8 text-sm text-gray-600">
+      <div class="flex items-center gap-2">
+        <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+        </svg>
+        <span class="font-medium">Secure</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
+          <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
+        </svg>
+        <span class="font-medium">Email Verified</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <svg class="w-5 h-5 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+        </svg>
+        <span class="font-medium">Fast Login</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  @keyframes loginSlideUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .login-card {
+    animation: loginSlideUp 0.6s ease-out;
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+  }
+  
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  .animation-delay-1000 {
+    animation-delay: 1s;
+  }
+</style>

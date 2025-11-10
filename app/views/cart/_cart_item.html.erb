@@ -1,0 +1,63 @@
+<div id="cart-item-<%= item.id %>" class="cart-item-card" data-item-index="<%= index %>">
+  <div class="cart-item-content">
+    <div class="cart-item-image-wrapper">
+      <%= link_to product_path(item.product) do %>
+        <%= image_tag item.product.image_url, alt: item.product.name, class: "cart-item-image" %>
+      <% end %>
+    </div>
+
+    <div class="cart-item-details">
+      <div class="cart-item-header">
+        <h3 class="cart-item-title">
+          <%= link_to item.product.name, product_path(item.product), class: "cart-item-link" %>
+        </h3>
+        <%= button_to cart_item_path(item), method: :delete, class: "cart-item-remove-btn", form: { data: { cart_item_delete: "true", product_name: item.product.name } } do %>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          </svg>
+        <% end %>
+      </div>
+
+      <p class="cart-item-price"><%= number_to_currency(item.product.price) %></p>
+
+      <% if item.product.active %>
+        <p class="cart-item-stock">In Stock</p>
+      <% else %>
+        <p class="cart-item-out-of-stock">Out of Stock</p>
+      <% end %>
+
+      <div class="cart-item-quantity-controls">
+        <%= form_with url: cart_item_path(item), method: :patch, class: "quantity-form" do |f| %>
+          <%= f.hidden_field :quantity, value: [item.quantity - 1, 1].max %>
+          <button type="submit" class="quantity-btn" <%= "disabled" if item.quantity <= 1 %>>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </button>
+        <% end %>
+
+        <input type="text" inputmode="numeric" pattern="[0-9]*" value="<%= item.quantity %>" class="quantity-input" readonly>
+
+        <%= form_with url: cart_item_path(item), method: :patch, class: "quantity-form" do |f| %>
+          <%= f.hidden_field :quantity, value: item.quantity + 1 %>
+          <button type="submit" class="quantity-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </button>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="cart-item-total-price">
+      <p class="item-total-amount"><%= number_to_currency(item.product.price * item.quantity) %></p>
+    </div>
+  </div>
+</div>
+
+
+
+
+

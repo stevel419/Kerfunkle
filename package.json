@@ -1,0 +1,25 @@
+{
+  "name": "kerfunkle-rails",
+  "version": "1.0.0",
+  "description": "Kerfunkle - Party Supply E-commerce Store",
+  "engines": {
+    "node": "20.x",
+    "npm": "10.x"
+  },
+  "scripts": {
+    "build": "echo 'Assets will be precompiled by Rails'"
+  },
+  "keywords": [
+    "rails",
+    "ecommerce",
+    "kerfunkle",
+    "party-supplies"
+  ],
+  "author": "Steve Lin",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stevel419/Kerfunkle.git"
+  }
+}
+

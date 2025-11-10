@@ -1,0 +1,516 @@
+<div class="shopease-product-page">
+  <div class="product-info-container">
+    <!-- Product Image Section -->
+    <div class="product-image-section">
+      <div class="main-image-wrapper">
+        <%= image_tag @product.image_url, 
+            id: "main-image", 
+            class: "main-product-image", 
+            alt: @product.name,
+            data: { product_id: @product.id } %>
+      </div>
+      
+      <% if @product.thumbnail_images.present? %>
+        <div class="thumbnail-container">
+          <% JSON.parse(@product.thumbnail_images).each do |thumbnail| %>
+            <%= image_tag thumbnail, 
+                class: "product-thumbnail", 
+                alt: "Product thumbnail",
+                data: { thumbnail: true } %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Product Details Section -->
+    <div class="product-details-section">
+      <h1 class="product-title"><%= @product.name %></h1>
+      
+      <!-- Rating -->
+      <% if @product.rating.present? %>
+        <div class="star-rating">
+          <div class="stars">
+            <span class="star filled">★</span>
+            <span class="star filled">★</span>
+            <span class="star filled">★</span>
+            <span class="star filled">★</span>
+            <span class="star half-filled">★</span>
+          </div>
+          <span class="rating-text"><%= @product.rating %></span>
+        </div>
+      <% end %>
+
+      <!-- Short Description -->
+      <% if @product.description.present? %>
+        <p class="product-short-description"><%= @product.description %></p>
+      <% end %>
+
+      <!-- Price -->
+      <p class="product-price"><%= number_to_currency(@product.price) %></p>
+
+      <!-- Add to Cart Button -->
+      <%= form_with url: cart_items_path, method: :post, class: "add-to-cart-form" do |f| %>
+        <%= f.hidden_field :product_id, value: @product.id %>
+        <%= f.hidden_field :quantity, value: 1 %>
+        <%= f.submit "ADD TO CART", class: "add-to-cart-btn" %>
+      <% end %>
+
+      <!-- Collapsible Sections -->
+      <div class="product-accordion">
+        <!-- Description Section -->
+        <% if @product.details.present? %>
+          <button class="accordion-toggle" data-section="description">
+            DESCRIPTION
+            <span class="accordion-icon">+</span>
+          </button>
+          <div class="accordion-content" id="description-content">
+            <div class="accordion-inner">
+              <%= raw @product.details %>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- Technical Details Section -->
+        <% if @product.technical_details.present? %>
+          <button class="accordion-toggle" data-section="technical">
+            TECHNICAL DETAILS
+            <span class="accordion-icon">+</span>
+          </button>
+          <div class="accordion-content" id="technical-content">
+            <div class="accordion-inner">
+              <%= raw @product.technical_details %>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- Shipping & Returns Section -->
+        <button class="accordion-toggle accordion-last" data-section="shipping">
+          SHIPPING & RETURNS
+          <span class="accordion-icon">+</span>
+        </button>
+        <div class="accordion-content" id="shipping-content">
+          <div class="accordion-inner">
+            <p>
+              Shipping is <strong>free</strong> for all orders. Once your order is processed, 
+              it is promptly dispatched, with an estimated delivery time of <strong>1 to 2 days</strong>.
+            </p>
+            <p>
+              <strong>14-DAY EASY RETURNS & EXCHANGES</strong>
+            </p>
+            <p>
+              To contact us, email officialkerfunkle@gmail.com
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+/* Product Page Styles - ShopEase Theme */
+.shopease-product-page {
+  min-height: calc(100vh - 56px);
+  background: #f8f9fa;
+  padding: 2rem 1rem;
+}
+
+.product-info-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  background: white;
+  border-radius: 0.75rem;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+@media (min-width: 1024px) {
+  .product-info-container {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Product Image Section */
+.product-image-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.main-image-wrapper {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.main-product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  cursor: zoom-in;
+  transition: transform 0.3s ease;
+}
+
+.main-product-image.zoomed {
+  transform: scale(2);
+  cursor: zoom-out;
+}
+
+.thumbnail-container {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.product-thumbnail {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 0.5rem;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.product-thumbnail:hover {
+  border-color: hsl(var(--primary));
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* Product Details Section */
+.product-details-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.product-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: hsl(var(--foreground));
+  line-height: 1.2;
+  margin: 0;
+}
+
+/* Star Rating */
+.star-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.stars {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.star {
+  color: #e5e7eb;
+  font-size: 1.25rem;
+}
+
+.star.filled {
+  color: #fbbf24;
+}
+
+.star.half-filled {
+  background: linear-gradient(to right, #fbbf24 50%, #e5e7eb 50%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.rating-text {
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+  font-weight: 500;
+}
+
+.product-short-description {
+  font-size: 1rem;
+  color: hsl(var(--muted-foreground));
+  line-height: 1.6;
+  margin: 0;
+}
+
+.product-price {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #10b981;
+  margin: 0.5rem 0;
+}
+
+/* Add to Cart Form */
+.add-to-cart-form {
+  margin: 1rem 0;
+}
+
+.add-to-cart-btn {
+  width: 100%;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.add-to-cart-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+}
+
+.add-to-cart-btn:active {
+  transform: translateY(0);
+}
+
+/* Accordion Sections */
+.product-accordion {
+  margin-top: 2rem;
+  border-top: 1px solid hsl(var(--border));
+}
+
+.accordion-toggle {
+  width: 100%;
+  padding: 1.25rem 1rem;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid hsl(var(--border));
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: hsl(var(--foreground));
+  transition: all 0.2s ease;
+}
+
+.accordion-toggle:hover {
+  background: hsl(var(--accent));
+}
+
+.accordion-toggle.active {
+  color: hsl(var(--primary));
+}
+
+.accordion-last {
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.accordion-icon {
+  font-size: 1.5rem;
+  font-weight: 400;
+  transition: transform 0.3s ease;
+}
+
+.accordion-toggle.active .accordion-icon {
+  transform: rotate(45deg);
+}
+
+.accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.accordion-content.active {
+  max-height: 1000px;
+}
+
+.accordion-inner {
+  padding: 1.5rem 1rem;
+  color: hsl(var(--muted-foreground));
+  line-height: 1.8;
+}
+
+.accordion-inner ul {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.accordion-inner li {
+  margin-bottom: 0.75rem;
+}
+
+.accordion-inner p {
+  margin-bottom: 1rem;
+}
+
+.accordion-inner strong {
+  color: hsl(var(--foreground));
+  font-weight: 600;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .product-info-container {
+    padding: 1.5rem;
+    gap: 2rem;
+  }
+
+  .product-title {
+    font-size: 1.5rem;
+  }
+
+  .product-price {
+    font-size: 1.75rem;
+  }
+
+  .main-product-image {
+    max-height: 400px;
+  }
+
+  .product-thumbnail {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+/* Animation for page load */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.product-info-container {
+  animation: fadeInUp 0.6s ease-out;
+}
+</style>
+
+<script>
+// Product page JavaScript - Optimized for immediate load
+(function() {
+  // Track if we've already initialized to prevent duplicate listeners
+  let isInitialized = false;
+
+  function initializeProductPage() {
+    // Check if we're on the product page
+    const mainImage = document.getElementById('main-image');
+    if (!mainImage) return;
+
+    // Prevent duplicate initialization
+    if (isInitialized && mainImage.dataset.productInitialized === 'true') {
+      console.log('🔄 Product page already initialized, skipping...');
+      return;
+    }
+
+    console.log('🎨 Initializing product page...');
+
+    // Mark as initialized
+    mainImage.dataset.productInitialized = 'true';
+    isInitialized = true;
+
+    // Image zoom functionality - use event delegation to prevent duplicates
+    if (!mainImage.onclick) {
+      mainImage.onclick = function() {
+        this.classList.toggle('zoomed');
+      };
+    }
+
+    // Thumbnail click functionality
+    const thumbnails = document.querySelectorAll('[data-thumbnail]');
+    thumbnails.forEach(thumbnail => {
+      // Only add listener if not already added
+      if (!thumbnail.dataset.listenerAdded) {
+        thumbnail.dataset.listenerAdded = 'true';
+        thumbnail.onclick = function() {
+          mainImage.src = this.src;
+          mainImage.classList.remove('zoomed');
+        };
+      }
+    });
+
+    // Accordion functionality - use event delegation
+    const accordionToggles = document.querySelectorAll('.accordion-toggle');
+    accordionToggles.forEach(toggle => {
+      // Only add listener if not already added
+      if (!toggle.dataset.listenerAdded) {
+        toggle.dataset.listenerAdded = 'true';
+        toggle.onclick = function() {
+          const section = this.getAttribute('data-section');
+          const content = document.getElementById(section + '-content');
+          const isActive = this.classList.contains('active');
+
+          // Close all other accordions
+          accordionToggles.forEach(t => {
+            t.classList.remove('active');
+          });
+          document.querySelectorAll('.accordion-content').forEach(c => {
+            c.classList.remove('active');
+          });
+
+          // Toggle current accordion
+          if (!isActive) {
+            this.classList.add('active');
+            content.classList.add('active');
+          }
+        };
+      }
+    });
+
+    console.log('✅ Product page initialized successfully');
+  }
+
+  // Run immediately if DOM is already loaded
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeProductPage);
+  } else {
+    // DOM is already ready, run immediately
+    initializeProductPage();
+  }
+  
+  // Also run on Turbo navigation
+  document.addEventListener('turbo:load', function() {
+    isInitialized = false; // Reset flag for new page
+    initializeProductPage();
+  });
+  
+  // Cleanup on navigation away
+  document.addEventListener('turbo:before-cache', function() {
+    // Remove active states before caching
+    document.querySelectorAll('.accordion-toggle.active').forEach(el => {
+      el.classList.remove('active');
+    });
+    document.querySelectorAll('.accordion-content.active').forEach(el => {
+      el.classList.remove('active');
+    });
+    
+    const mainImage = document.getElementById('main-image');
+    if (mainImage) {
+      mainImage.classList.remove('zoomed');
+      mainImage.dataset.productInitialized = 'false';
+    }
+
+    // Reset listener flags
+    document.querySelectorAll('[data-listener-added]').forEach(el => {
+      delete el.dataset.listenerAdded;
+    });
+
+    isInitialized = false;
+  });
+})();
+</script>

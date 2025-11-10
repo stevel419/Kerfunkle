@@ -1,0 +1,297 @@
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-8">Secure Checkout</h1>
+
+  <% if @cart_items.empty? %>
+    <div class="text-center py-12">
+      <h2 class="text-2xl font-medium text-gray-900 mb-4">Your cart is empty</h2>
+      <%= link_to "Continue Shopping", products_path, class: "bg-purple-600 text-white px-6 py-3 rounded-md hover:bg-purple-700" %>
+    </div>
+  <% else %>
+    <div class="max-w-4xl mx-auto">
+      <div class="bg-white rounded-lg shadow-md mb-8">
+        <div class="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200">
+          <h2 class="text-base sm:text-lg font-medium text-gray-900">Order Summary</h2>
+        </div>
+
+        <div class="divide-y divide-gray-200">
+          <% @cart_items.each do |item| %>
+            <div class="px-4 sm:px-6 py-4">
+              <!-- Mobile Layout (stacked) -->
+              <div class="flex flex-col sm:hidden space-y-3">
+                <div class="flex items-start space-x-3">
+                  <div class="flex-shrink-0 w-16 h-16">
+                    <%= image_tag item.product.image_url, class: "w-full h-full object-cover rounded-md", alt: item.product.name %>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <h3 class="text-base font-medium text-gray-900 break-words">
+                      <%= item.product.name %>
+                    </h3>
+                    <p class="text-gray-500 text-xs mt-1">
+                      <%= item.product.category %>
+                    </p>
+                  </div>
+                </div>
+                <div class="flex justify-between items-center pl-0">
+                  <span class="text-sm font-medium text-gray-700">Qty: <%= item.quantity %></span>
+                  <span class="text-lg font-bold text-gray-900">
+                    <%= number_to_currency(item.product.price * item.quantity) %>
+                  </span>
+                </div>
+              </div>
+
+              <!-- Desktop Layout (horizontal) -->
+              <div class="hidden sm:flex items-center">
+                <div class="flex-shrink-0 w-16 h-16">
+                  <%= image_tag item.product.image_url, class: "w-full h-full object-cover rounded-md", alt: item.product.name %>
+                </div>
+
+                <div class="ml-4 flex-1">
+                  <h3 class="text-lg font-medium text-gray-900">
+                    <%= item.product.name %>
+                  </h3>
+                  <p class="text-gray-500 text-sm">
+                    <%= item.product.category %>
+                  </p>
+                </div>
+
+                <div class="ml-4 flex items-center space-x-4">
+                  <span class="text-lg font-medium">Qty: <%= item.quantity %></span>
+                  <span class="text-lg font-medium text-gray-900">
+                    <%= number_to_currency(item.product.price * item.quantity) %>
+                  </span>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="px-4 sm:px-6 py-4 bg-gray-50 border-t border-gray-200">
+          <div class="flex justify-between items-center">
+            <span class="text-base sm:text-lg font-medium text-gray-900">Total</span>
+            <span class="text-xl sm:text-2xl font-bold text-gray-900">
+              <%= number_to_currency(@cart_items.sum { |item| item.product.price * item.quantity }) %>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <% if logged_in? %>
+        <div class="text-center">
+          <p class="text-sm text-gray-600 mb-4">
+            You are logged in as <%= current_user.email %>. Your order will be associated with your account.
+          </p>
+        </div>
+      <% else %>
+        <div class="text-center">
+          <p class="text-sm text-gray-600 mb-4">
+            You are checking out as a guest. Consider signing in for faster checkout and order tracking.
+          </p>
+        </div>
+      <% end %>
+
+      <div id="checkout-container" class="min-h-[400px] flex items-center justify-center">
+        <div id="loading-spinner" class="text-center">
+          <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+          <p class="text-gray-600">Loading checkout...</p>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<script>
+// Store checkout instance globally for cleanup
+let stripeCheckoutInstance = null;
+
+// Initialize checkout - works with both full page loads and Turbo navigation
+function initializeCheckout() {
+  // Check if checkout container exists (we're on the checkout page)
+  const checkoutContainer = document.getElementById('checkout-container');
+  if (!checkoutContainer) return;
+
+  const isDevelopment = window.location.protocol === 'http:';
+  const stripeKey = '<%= ENV['STRIPE_PUBLISHABLE_KEY'] %>';
+
+  if (isDevelopment && (!stripeKey || stripeKey.trim() === '')) {
+    // Development mode without Stripe keys
+    document.getElementById('loading-spinner').innerHTML = `
+      <div class="text-center p-8">
+        <div class="mb-4">
+          <svg class="mx-auto h-12 w-12 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+          </svg>
+        </div>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">Stripe Checkout Unavailable</h3>
+        <p class="text-gray-600 mb-4">
+          Stripe payment processing requires HTTPS and valid API keys.
+        </p>
+        <div class="bg-blue-50 border border-blue-200 rounded-md p-4 mb-4">
+          <h4 class="font-medium text-blue-800 mb-2">To enable Stripe checkout:</h4>
+          <ol class="text-sm text-blue-700 space-y-1">
+            <li>1. Set STRIPE_SECRET_KEY and STRIPE_PUBLISHABLE_KEY environment variables</li>
+            <li>2. Deploy to HTTPS (production) or use ngrok for local HTTPS testing</li>
+            <li>3. Configure Stripe webhook endpoint</li>
+          </ol>
+        </div>
+        <div class="text-sm text-gray-500">
+          <p><strong>Current status:</strong></p>
+          <p>• Development mode: ✅ Working</p>
+          <p>• Stripe keys: ❌ Not configured</p>
+          <p>• HTTPS: ❌ Required for Stripe</p>
+        </div>
+      </div>
+    `;
+  } else if (!stripeKey || stripeKey.trim() === '') {
+    // Production/development without keys
+    document.getElementById('loading-spinner').innerHTML = `
+      <p class="text-red-600">Stripe configuration required. Please set STRIPE_PUBLISHABLE_KEY environment variable.</p>
+    `;
+  } else {
+    // Load Stripe and initialize checkout
+    loadStripeAndInitialize();
+  }
+}
+
+// Listen to both DOMContentLoaded (full page load) and turbo:load (Turbo navigation)
+document.addEventListener('DOMContentLoaded', initializeCheckout);
+document.addEventListener('turbo:load', initializeCheckout);
+
+// Clean up Stripe checkout when navigating away from the page
+document.addEventListener('turbo:before-cache', function() {
+  if (stripeCheckoutInstance) {
+    try {
+      stripeCheckoutInstance.destroy();
+      console.log('🧹 Cleaned up Stripe checkout before caching');
+    } catch (e) {
+      console.log('Checkout cleanup on navigation:', e);
+    }
+    stripeCheckoutInstance = null;
+  }
+});
+
+document.addEventListener('turbo:before-visit', function() {
+  if (stripeCheckoutInstance) {
+    try {
+      stripeCheckoutInstance.destroy();
+      console.log('🧹 Cleaned up Stripe checkout before navigation');
+    } catch (e) {
+      console.log('Checkout cleanup on visit:', e);
+    }
+    stripeCheckoutInstance = null;
+  }
+});
+
+async function loadStripeAndInitialize() {
+  try {
+    // Clean up any existing checkout instance
+    if (stripeCheckoutInstance) {
+      try {
+        stripeCheckoutInstance.destroy();
+        console.log('🧹 Cleaned up previous Stripe checkout instance');
+      } catch (e) {
+        console.log('Previous checkout already destroyed');
+      }
+      stripeCheckoutInstance = null;
+    }
+
+    // Create checkout session
+    const response = await fetch('<%= checkout_index_path %>', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
+      }
+    });
+
+    const data = await response.json();
+
+    if (data.clientSecret) {
+      // Load Stripe script dynamically to avoid conflicts
+      if (!window.Stripe) {
+        await loadStripeScript();
+      }
+
+      // Initialize Stripe
+      const stripe = Stripe('<%= ENV['STRIPE_PUBLISHABLE_KEY'] %>');
+      const checkout = await stripe.initEmbeddedCheckout({
+        clientSecret: data.clientSecret,
+      });
+
+      // Store instance for cleanup
+      stripeCheckoutInstance = checkout;
+
+      // Clear the container and mount checkout
+      const container = document.getElementById('checkout-container');
+      container.innerHTML = '';
+      checkout.mount('#checkout-container');
+
+      console.log('✅ Stripe checkout mounted successfully');
+
+      // Auto-scroll to checkout form after mounting
+      setTimeout(() => {
+        const checkoutContainer = document.getElementById('checkout-container');
+        if (checkoutContainer) {
+          checkoutContainer.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start'
+          });
+          console.log('📜 Auto-scrolled to checkout form');
+        }
+      }, 300); // Small delay to ensure form is fully rendered
+    } else if (data.error) {
+      throw new Error(data.error);
+    } else {
+      throw new Error('Failed to create checkout session');
+    }
+  } catch (error) {
+    console.error('Checkout initialization failed:', error);
+
+    let errorMessage = 'Failed to load checkout. Please try again.';
+    let showRetryButton = true;
+
+    if (error.message.includes('Product prices need to be configured')) {
+      errorMessage = error.message;
+      showRetryButton = false;
+    } else if (error.message.includes('DOM element that contains no child nodes')) {
+      errorMessage = 'Checkout container issue. Please refresh the page and try again.';
+    } else if (error.message.includes('Failed to fetch') || error.message.includes('network')) {
+      errorMessage = 'Network error. Please check your internet connection and try again.';
+    } else if (error.message.includes('HTTPS')) {
+      errorMessage = 'Stripe requires HTTPS in production. This is expected in development mode.';
+    }
+
+    document.getElementById('loading-spinner').innerHTML = `
+      <div class="text-center p-6">
+        <div class="mb-4">
+          <svg class="mx-auto h-12 w-12 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+          </svg>
+        </div>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">Checkout Error</h3>
+        <p class="text-gray-600 mb-4">${errorMessage}</p>
+        ${showRetryButton ? `
+          <button onclick="loadStripeAndInitialize()" class="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700">
+            Retry Checkout
+          </button>
+        ` : ''}
+        <div class="mt-4 text-sm text-gray-500">
+          <p><strong>Troubleshooting:</strong></p>
+          <p>• Clear browser cache and cookies</p>
+          <p>• Try in an incognito/private window</p>
+          <p>• Check browser console for additional errors</p>
+        </div>
+      </div>
+    `;
+  }
+}
+
+function loadStripeScript() {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = 'https://js.stripe.com/v3/';
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+}
+</script>
