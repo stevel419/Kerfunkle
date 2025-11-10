@@ -114,9 +114,6 @@ GEM
       reline (>= 0.3.8)
     debug_inspector (1.2.0)
     diff-lcs (1.6.2)
-    dotenv (3.1.8)
-    dotenv-rails (3.1.8)
-      dotenv (= 3.1.8)
       railties (>= 6.1)
     drb (2.2.3)
     ed25519 (1.4.0)
@@ -153,7 +150,6 @@ GEM
       base64 (~> 0.2)
       bcrypt_pbkdf (~> 1.0)
       concurrent-ruby (~> 1.2)
-      dotenv (~> 3.1)
       ed25519 (~> 1.4)
       net-ssh (~> 7.3)
       sshkit (>= 1.23.0, < 2.0)
@@ -408,7 +404,6 @@ DEPENDENCIES
   bullet
   capybara
   debug
-  dotenv-rails
   factory_bot_rails
   faker
   importmap-rails
