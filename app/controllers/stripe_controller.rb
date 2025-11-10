@@ -43,7 +43,7 @@ class StripeController < ApplicationController
       paid_at: Time.current
     )
 
-    # Send confirmation email
-    OrderMailer.confirmation(order).deliver_later
+    # Send confirmation email synchronously
+    OrderMailer.confirmation(order).deliver_now
   end
 end

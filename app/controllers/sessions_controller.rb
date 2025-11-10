@@ -9,8 +9,8 @@ class SessionsController < ApplicationController
     user = User.find_or_create_by(email: params[:email].downcase.strip)
     user.generate_verification_code
     
-    # Send verification email asynchronously
-    UserMailer.verification_code(user).deliver_later
+    # Send verification email synchronously (faster and works without job queue)
+    UserMailer.verification_code(user).deliver_now
     
     session[:pending_email] = user.email
     redirect_to verify_sessions_path, notice: "Verification code sent to #{user.email}"

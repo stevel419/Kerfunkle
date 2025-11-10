@@ -67,8 +67,8 @@ class CheckoutController < ApplicationController
       # Clear the cart after successful order
       cart_for_current_context&.clear!
 
-      # Send order confirmation email
-      OrderMailer.confirmation(@order).deliver_later if logged_in?
+      # Send order confirmation email synchronously
+      OrderMailer.confirmation(@order).deliver_now if logged_in?
     else
       @order = nil
       flash[:alert] = "Order not found"
